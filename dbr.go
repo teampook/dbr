@@ -13,13 +13,27 @@ import (
 // Open creates a Connection.
 // log can be nil to ignore logging.
 func Open(driver, dsn string, log EventReceiver) (*Connection, error) {
-	if log == nil {
-		log = nullReceiver
-	}
 	conn, err := apmsql.Open(driver, dsn)
 	if err != nil {
 		return nil, err
 	}
+
+	return OpenWith(driver, dsn, conn, log)
+}
+
+func OpenWith(driver, dsn string, conn *sql.DB, log EventReceiver) (*Connection, error) {
+	if log == nil {
+		log = nullReceiver
+	}
+
+	var err error
+	if conn == nil {
+		conn, err = sql.Open(driver, dsn)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	var d Dialect
 	switch driver {
 	case "mysql":
