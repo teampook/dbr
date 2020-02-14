@@ -28,7 +28,7 @@ func OpenWith(driver, dsn string, conn *sql.DB, log EventReceiver) (*Connection,
 
 	var err error
 	if conn == nil {
-		conn, err = sql.Open(driver, dsn)
+		conn, err = apmsql.Open(driver, dsn)
 		if err != nil {
 			return nil, err
 		}
